@@ -1,0 +1,14 @@
+{
+	"name": "pierrestoffe/commercedigestemail",
+	"description": "Send a weekly/monthly digest of your Craft Commerce e-shop&#39;s activity",
+	"type": "craft-plugin",
+	"authors": [
+		{
+			"name": "Pierre Stoffe",
+			"homepage": "https://pierrestoffe.be"
+		}
+	],
+	"require": {
+		"composer/installers": "~1.0"
+	}
+}
