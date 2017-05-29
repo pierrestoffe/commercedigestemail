@@ -1,8 +1,8 @@
 <?php
 /**
- * Commerce digest email plugin for Craft CMS
+ * Commerce Digest Email plugin for Craft CMS
  *
- * Send a weekly/monthly digest of your Craft Commerce e-sho's activity
+ * Email a weekly/monthly digest of your Craft Commerce e-sho's activity
  *
  * @author    Pierre Stoffe
  * @copyright Copyright (c) 2017 Pierre Stoffe
@@ -18,16 +18,18 @@ class CommerceDigestEmailPlugin extends BasePlugin
     public function init()
     {
         parent::init();
+
+        //CommerceDigestEmailPlugin::log('This is a test', LogLevel::Info, true);
     }
 
     public function getName()
     {
-         return Craft::t('Commerce digest email');
+         return Craft::t('Commerce Digest Email');
     }
 
     public function getDescription()
     {
-        return Craft::t('Send a weekly/monthly digest of your Craft Commerce e-shop\'s activity');
+        return Craft::t('Email a weekly/monthly digest of your Craft Commerce e-shop\'s activity');
     }
 
     public function getDocumentationUrl()
@@ -62,7 +64,7 @@ class CommerceDigestEmailPlugin extends BasePlugin
 
     public function hasCpSection()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -105,8 +107,14 @@ class CommerceDigestEmailPlugin extends BasePlugin
     protected function defineSettings()
     {
         return array(
-            'someSetting' => array(AttributeType::String, 'label' => 'Some Setting', 'default' => ''),
+            'frequency' => array(AttributeType::String, 'default' => 'weekly'),
+            'recipients' => array(AttributeType::String, 'default' => '')
         );
+    }
+    
+    public function getSettingsDefinition()
+    {
+        return $this->defineSettings();
     }
 
     /**

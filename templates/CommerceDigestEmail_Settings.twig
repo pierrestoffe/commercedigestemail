@@ -1,8 +1,8 @@
 {#
 /**
- * Commerce digest email plugin for Craft CMS
+ * Commerce Digest Email plugin for Craft CMS
  *
- * Commerce digest email Settings.twig
+ * Commerce Digest Email Settings.twig
  *
  * @author    Pierre Stoffe
  * @copyright Copyright (c) 2017 Pierre Stoffe
@@ -17,10 +17,50 @@
 {% includeCssResource "commercedigestemail/css/CommerceDigestEmail_Style.css" %}
 {% includeJsResource "commercedigestemail/js/CommerceDigestEmail_Script.js" %}
 
-{{ forms.textField({
-    label: 'Some Setting',
-    instructions: 'Enter some setting here.',
-    id: 'someSetting',
-    name: 'someSetting', 
-    value: settings['someSetting']})
-}}
+<div class="commerce-digest-email-container">
+    <p>
+        {{- 'Commerce Digest Email sends a weekly/monthly email containing everything you need to know about the activity of your e-shop during the last week/month.'|translate -}}
+    </p>
+</div>
+
+<hr>
+
+<div class="commerce-digest-email-container">
+    {{ forms.selectField({
+        label: 'Frequency'|translate,
+        instructions: 'Choose the frequency the system should send the digest email.'|translate,
+        id: 'frequency',
+        name: 'frequency',
+        options: [
+            {
+                label: 'Weekly (every Monday at 9am GMT)'|translate,
+                value: 'weekly'
+            },
+            {
+                label: 'Monthly (first day of the month at 9am GMT)'|translate,
+                value: 'monthly'
+            }
+        ],
+        value: settings.frequency
+    }) }}
+
+    {{ forms.textField({
+        label: 'Recipients'|translate,
+        instructions: 'List the email addresses that will receive the digest email. Separate them with a comma.'|translate,
+        id: 'recipients',
+        name: 'recipients', 
+        value: settings.recipients,
+        placeholder: 'me@domain.com'
+    }) }}
+</div>
+
+<hr />
+
+<div class="commerce-digest-email-container">
+    <div class="buttons">
+		<a class="btn" href="{{ actionUrl('commerceDigestEmail/test/thisIsATest') }}">{{ 'Send a test email'|translate }}</a>
+        <p class="commerce-digest-email-buttons-paragraph js-commerce-digest-email-buttons-paragraph">
+            {{- 'The email will be sent to the recipients listed above'|translate -}}
+        </p>
+	</div>
+</div>

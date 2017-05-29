@@ -1,7 +1,7 @@
 /**
- * Commerce digest email plugin for Craft CMS
+ * Commerce Digest Email plugin for Craft CMS
  *
- * Commerce digest email CSS
+ * Commerce Digest Email CSS
  *
  * @author    Pierre Stoffe
  * @copyright Copyright (c) 2017 Pierre Stoffe
@@ -9,3 +9,13 @@
  * @package   CommerceDigestEmail
  * @since     1.0.0
  */
+
+.commerce-digest-email-container {
+    max-width: 510px;
+}
+
+.commerce-digest-email-buttons-paragraph {
+    float: left;
+    margin-left: 10px;
+    color: hsl(212, 10%, 60%);
+}

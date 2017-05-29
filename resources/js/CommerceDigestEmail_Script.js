@@ -1,7 +1,7 @@
 /**
- * Commerce digest email plugin for Craft CMS
+ * Commerce Digest Email plugin for Craft CMS
  *
- * Commerce digest email JS
+ * Commerce Digest Email JS
  *
  * @author    Pierre Stoffe
  * @copyright Copyright (c) 2017 Pierre Stoffe

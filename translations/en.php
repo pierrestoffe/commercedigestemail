@@ -1,8 +1,8 @@
 <?php
 /**
- * Commerce digest email plugin for Craft CMS
+ * Commerce Digest Email plugin for Craft CMS
  *
- * Commerce digest email Translation
+ * Commerce Digest Email Translation
  *
  * @author    Pierre Stoffe
  * @copyright Copyright (c) 2017 Pierre Stoffe
