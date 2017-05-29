@@ -20,6 +20,11 @@ class CommerceDigestEmailVariable
         return craft()->commerceDigestEmail_settings->getSettings();
     }
     
+    public function getOrders()
+    {
+        return craft()->commerceDigestEmail_orders->getOrders();
+    }
+    
     public function getSales()
     {
         return craft()->commerceDigestEmail_sales->getSales();

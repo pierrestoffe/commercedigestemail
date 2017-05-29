@@ -14,23 +14,18 @@
 namespace Craft;
 
 class CommerceDigestEmail_SalesService extends BaseApplicationComponent
-{
-    public $frequency;
-    
-    public function __construct()
-    {
-        $this->frequency = craft()->commerceDigestEmail_settings->getSetting('frequency');
-    }
-    
+{    
     public function getSales()
     {
         $sales = (object) array();
         
         $sales->transactions = $this->getTransactions();
+        $sales->transactionsIds = $this->getTransactionsIds();
         $sales->purchaseTransactions = $this->getPurchaseTransactions();
+        $sales->purchaseTransactionsIds = $this->getPurchaseTransactionsIds();
         $sales->refundedTransactions = $this->getRefundedTransactions();
+        $sales->refundedTransactionsIds = $this->getRefundedTransactionsIds();
         $sales->mostExpensiveTransaction = $this->getMostExpensiveTransaction();
-        $sales->orders = $this->getOrders();
         
         $sales->transactionsStats = (object) array();
         $sales->transactionsStats->subtotal = $this->getTransactionsPurchaseSubtotal();
@@ -40,39 +35,21 @@ class CommerceDigestEmail_SalesService extends BaseApplicationComponent
         $sales->mostExpensiveTransactionStats = (object) array();
         $sales->mostExpensiveTransactionStats->total = $this->getMostExpensiveTransactionTotal();
         
-        $sales->ordersStats = (object) array();
-        $sales->ordersStats->quantity = $this->getOrdersQuantity();
-        
         return $sales;
     }
     
     public function getStart()
     {
-        $start = ($this->frequency == 'weekly' ? craft()->commerceDigestEmail_dates->getFirstDayOfTheWeek() : craft()->commerceDigestEmail_dates->getFirstDayOfTheMonth());
+        $start = ($this->frequency == 'monthly' ? craft()->commerceDigestEmail_dates->getFirstDayOfTheMonth() : craft()->commerceDigestEmail_dates->getFirstDayOfTheWeek());
         
         return $start;
     }
     
     public function getEnd()
     {
-        $end = ($this->frequency == 'weekly' ? craft()->commerceDigestEmail_dates->getEndDayOfTheWeek() : craft()->commerceDigestEmail_dates->getEndDayOfTheMonth());
+        $end = ($this->frequency == 'monthly' ? craft()->commerceDigestEmail_dates->getLastDayOfTheMonth() : craft()->commerceDigestEmail_dates->getLastDayOfTheWeek());
         
         return $end;
-    }
-    
-    public function getOrders()
-    {
-        $transactions_ids = array_column($this->getTransactions(), 'orderId');
-        
-        $query = craft()->db->createCommand()
-                ->select('id, shippingAddressId, baseShippingCost, paymentMethodId, totalPrice')
-                ->from('commerce_orders')
-                ->where('isCompleted = 1')
-                ->andWhere('id IN (' . join($transactions_ids, ', ') . ')')
-                ->limit(-1)
-                ->queryAll();
-                
-        return $query;
     }
     
     public function getTransactions()
@@ -82,11 +59,23 @@ class CommerceDigestEmail_SalesService extends BaseApplicationComponent
                 ->from('commerce_transactions')
                 ->where('type IN ("purchase", "refund")')
                 ->andWhere('status = "success"')
-                ->andWhere('dateCreated >= "' . $this->getStart() . '"')
+                ->andWhere('dateCreated >= "' . craft()->commerceDigestEmail_dates->getStart() . '"')
                 ->limit(-1)
-                ->queryAll();
+                ->queryAll(); 
                 
         return $query;
+    }
+    
+    public function getTransactionsIds()
+    {
+        $transactions = $this->getTransactions();
+        if(!count($transactions)) {
+            return null;
+        }
+        
+        $transaction_ids = array_column($transactions, 'orderId');
+        
+        return $transaction_ids;
     }
     
     public function getPurchaseTransactions()
@@ -103,6 +92,18 @@ class CommerceDigestEmail_SalesService extends BaseApplicationComponent
         return $purchase_transactions;
     }
     
+    public function getPurchaseTransactionsIds()
+    {
+        $purchase_transaction = $this->getPurchaseTransactions();
+        if(!count($purchase_transaction)) {
+            return null;
+        }
+        
+        $purchase_transaction_ids = array_column($purchase_transaction, 'orderId');
+        
+        return $purchase_transaction_ids;
+    }
+    
     public function getRefundedTransactions()
     {
         $transactions = $this->getTransactions();
@@ -115,6 +116,18 @@ class CommerceDigestEmail_SalesService extends BaseApplicationComponent
         });
         
         return $refunded_transactions;
+    }
+    
+    public function getRefundedTransactionsIds()
+    {
+        $refunded_transaction = $this->getRefundedTransactions();
+        if(!count($refunded_transaction)) {
+            return null;
+        }
+        
+        $refunded_transaction_ids = array_column($refunded_transaction, 'orderId');
+        
+        return $refunded_transaction_ids;
     }
     
     public function getTransactionsPurchaseSubtotal()
@@ -156,13 +169,6 @@ class CommerceDigestEmail_SalesService extends BaseApplicationComponent
         return $transactions_total;
     }
     
-    public function getOrdersQuantity()
-    {
-        $transactions_quantity = count($this->getOrders());
-        
-        return $transactions_quantity;
-    }
-    
     public function getMostExpensiveTransaction()
     {
         $purchase_transactions = $this->getPurchaseTransactions();
@@ -170,8 +176,8 @@ class CommerceDigestEmail_SalesService extends BaseApplicationComponent
             return null;
         }
         
-        $most_expensive_transaction_column = array_reduce($purchase_transactions, function ($current, $highest) {
-            return $current['paymentAmount'] > $highest['paymentAmount'] ? $current : $highest;
+        $most_expensive_transaction_column = array_reduce($purchase_transactions, function ($a, $b) {
+            return $a['paymentAmount'] > $b['paymentAmount'] ? $a : $b;
         });
         
         return $most_expensive_transaction_column;

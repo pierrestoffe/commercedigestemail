@@ -15,8 +15,11 @@ namespace Craft;
 
 class CommerceDigestEmail_DatesService extends BaseApplicationComponent
 {
+    public $frequency;
+
     public function __construct()
     {
+        $this->frequency = craft()->commerceDigestEmail_settings->getSetting('frequency');
         $this->setTimezone();
     }
     
@@ -64,6 +67,20 @@ class CommerceDigestEmail_DatesService extends BaseApplicationComponent
     public function getLastDayOfTheWeek()
     {
         return date('Y-m-d', strtotime('sunday this week'));
+    }
+    
+    public function getStart()
+    {
+        $start = ($this->frequency == 'monthly' ? $this->getFirstDayOfTheMonth() : $this->getFirstDayOfTheWeek());
+        
+        return $start;
+    }
+    
+    public function getEnd()
+    {
+        $end = ($this->frequency == 'monthly' ? $this->getLastDayOfTheMonth() : $this->getLastDayOfTheWeek());
+        
+        return $end;
     }
 
 }
