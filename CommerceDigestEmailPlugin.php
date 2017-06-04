@@ -34,12 +34,12 @@ class CommerceDigestEmailPlugin extends BasePlugin
 
     public function getDocumentationUrl()
     {
-        return 'https://github.com/pierrestoffe/commercedigestemail/blob/master/README.md';
+        return 'https://github.com/pierrestoffe/craft-commercedigestemail/blob/master/README.md';
     }
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/pierrestoffe/commercedigestemail/master/releases.json';
+        return 'https://raw.githubusercontent.com/pierrestoffe/craft-commercedigestemail/master/releases.json';
     }
 
     public function getVersion()

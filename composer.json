@@ -1,5 +1,5 @@
 {
-	"name": "pierrestoffe/commercedigestemail",
+	"name": "pierrestoffe/craft-commercedigestemail",
 	"description": "Email a weekly/monthly digest of your Craft Commerce e-shop&#39;s activity",
 	"type": "craft-plugin",
 	"authors": [
