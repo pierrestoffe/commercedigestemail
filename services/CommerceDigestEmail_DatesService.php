@@ -16,17 +16,24 @@ namespace Craft;
 class CommerceDigestEmail_DatesService extends BaseApplicationComponent
 {
     public $frequency;
+    public $timezone;
+    public $format;
 
     public function __construct()
     {
         $this->frequency = craft()->commerceDigestEmail_settings->getSetting('frequency');
+        $this->timezone = 'GMT';
+        $this->format = 'Y-m-d';
         $this->setTimezone();
     }
     
     public function getDates()
-    {    
+    {
         $dates = (object) array();
         $dates->today = $this->getToday();
+        $dates->start = $this->getStart();
+        $dates->end = $this->getEnd();
+        $dates->frequency = $this->frequency;
         
         $dates->week = (object) array();
         $dates->week->first = $this->getFirstDayOfTheWeek();
@@ -41,32 +48,32 @@ class CommerceDigestEmail_DatesService extends BaseApplicationComponent
     
     public function setTimezone()
     {
-        date_default_timezone_set('GMT');
+        date_default_timezone_set($this->timezone);
     }
     
     public function getToday()
     {
-        return date('Y-m-d');
+        return DateTime::createFromString(date($this->format . ' H:i', strtotime('now')));
     }
     
     public function getFirstDayOfTheMonth()
     {
-        return date('Y-m-01');
+        return DateTime::createFromString(date($this->format . ' 00:00:00', strtotime('first day of this month')));
     }
     
     public function getLastDayOfTheMonth()
     {
-        return date('Y-m-t');
+        return DateTime::createFromString(date($this->format . ' 23:59:59', strtotime('last day of this month')));
     }
     
     public function getFirstDayOfTheWeek()
     {
-        return date('Y-m-d', strtotime('monday this week'));
+        return DateTime::createFromString(date($this->format . ' 00:00:00', strtotime('monday this week')));
     }
     
     public function getLastDayOfTheWeek()
     {
-        return date('Y-m-d', strtotime('sunday this week'));
+        return DateTime::createFromString(date($this->format . ' 23:59:59', strtotime('sunday this week')));
     }
     
     public function getStart()
@@ -79,6 +86,10 @@ class CommerceDigestEmail_DatesService extends BaseApplicationComponent
     public function getEnd()
     {
         $end = ($this->frequency == 'monthly' ? $this->getLastDayOfTheMonth() : $this->getLastDayOfTheWeek());
+        
+        if($this->getToday() < $end) {
+            $end = $this->getToday();
+        }
         
         return $end;
     }
