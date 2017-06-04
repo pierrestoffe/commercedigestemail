@@ -49,12 +49,12 @@ class CommerceDigestEmail_OrdersService extends BaseApplicationComponent
     {
         $orders = $this->getOrdersByIds();
         if(!count($orders)) {
-            return null;
+            return (int) 0;
         }
         
         $orders_quantity = count($orders);
         
-        return $orders_quantity;
+        return (int) $orders_quantity;
     }
 
 }

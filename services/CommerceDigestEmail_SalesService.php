@@ -28,6 +28,7 @@ class CommerceDigestEmail_SalesService extends BaseApplicationComponent
         $sales->mostExpensiveTransaction = $this->getMostExpensiveTransaction();
         
         $sales->transactionsStats = (object) array();
+        $sales->transactionsStats->quantity = $this->getTransactionsQuantity();
         $sales->transactionsStats->subtotal = $this->getTransactionsPurchaseSubtotal();
         $sales->transactionsStats->refunded = $this->getTransactionsRefundSubtotal();
         $sales->transactionsStats->total = $this->getTransactionsTotal();
@@ -130,30 +131,37 @@ class CommerceDigestEmail_SalesService extends BaseApplicationComponent
         return $refunded_transaction_ids;
     }
     
+    public function getTransactionsQuantity()
+    {
+        $transactions_quantity = count($this->getTransactions());
+        
+        return $transactions_quantity;
+    }
+    
     public function getTransactionsPurchaseSubtotal()
     {
         $purchase_transactions = $this->getPurchaseTransactions();
         if(!count($purchase_transactions)) {
-            return null;
+            return (int) '0';
         }
         
         $transactions_subtotal_column = array_column($purchase_transactions, 'paymentAmount');
         $transactions_subtotal = array_sum($transactions_subtotal_column);
         
-        return $transactions_subtotal;
+        return (float) $transactions_subtotal;
     }
     
     public function getTransactionsRefundSubtotal()
     {
         $refunded_transactions = $this->getRefundedTransactions();
         if(!count($refunded_transactions)) {
-            return null;
+            return (int) '0';
         }
         
         $refunded_transactions_total_column = array_column($refunded_transactions, 'paymentAmount');
         $refunded_transactions_total = array_sum($refunded_transactions_total_column);
         
-        return $refunded_transactions_total;
+        return (float) $refunded_transactions_total;
     }
     
     public function getTransactionsTotal()
@@ -161,12 +169,12 @@ class CommerceDigestEmail_SalesService extends BaseApplicationComponent
         $purchase_transactions_subtotal = $this->getTransactionsPurchaseSubtotal();
         $refunded_transactions_subtotal = $this->getTransactionsRefundSubtotal();
         if(!count($purchase_transactions_subtotal) || !count($refunded_transactions_subtotal)) {
-            return null;
+            return (int) '0';
         }
         
         $transactions_total = $purchase_transactions_subtotal - $refunded_transactions_subtotal;
         
-        return $transactions_total;
+        return (float) $transactions_total;
     }
     
     public function getMostExpensiveTransaction()
@@ -187,12 +195,12 @@ class CommerceDigestEmail_SalesService extends BaseApplicationComponent
     {
         $most_expensive_transaction = $this->getMostExpensiveTransaction();
         if(!count($most_expensive_transaction)) {
-            return null;
+            return (int) '0';
         }
         
         $most_expensive_transaction_total = $this->getMostExpensiveTransaction()['paymentAmount'];
         
-        return $most_expensive_transaction_total;
+        return (float) $most_expensive_transaction_total;
     }
 
 }
